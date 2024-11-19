@@ -13,10 +13,7 @@ pipeline {
         CLUSTER = 'meghdo-cluster'
         REGION = 'europe-west1'
 
-        TIMESTAMP = sh(
-                    script: 'date +%Y%m%d-%H%M%S',
-                    returnStdout: true
-                ).trim()
+        TIMESTAMP = sh(script: "echo `date +%s`", returnStdout: true).trim()
 
         JOB_IDENTIFIER = "${env.JOB_NAME}-${TIMESTAMP}"
     }
