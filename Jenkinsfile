@@ -15,7 +15,7 @@ pipeline {
 
         TIMESTAMP = sh(script: "echo `date +%s`", returnStdout: true).trim()
 
-        JOB_IDENTIFIER = "${env.JOB_NAME}-${TIMESTAMP}"
+        JOB_IDENTIFIER = ${TIMESTAMP}
     }
     stages {
         stage('Deploy Liquibase changes') {
