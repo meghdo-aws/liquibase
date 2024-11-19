@@ -18,28 +18,26 @@
           stage('Deploy Liquibase changes') {
            steps {
                 script {
-                    if [ ${params.release} == "update"]; then
+                   sh """"
+                    if [ ${params.action} == "update"]; then
                       if [ -f helm-charts/changelog/releases/${params.release}/*.xml]; then
-                        sh """
-                        gcloud config set project ${projectId}
-                        gcloud container clusters get-credentials ${clusterName} --zone ${clusterRegion}
+                        gcloud config set project ${PROJECT_ID}
+                        gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                         helm install liquibase-update-${params.release} ${CHART_PATH} --namespace ${NAMESPACE} --set release=${params.release} --set rollbackrelease=${params.release} --set action="update"
 
                         helm install liquibase-tag-${params.release} ${CHART_PATH} --namespace ${NAMESPACE} --set release=${params.release} --set rollbackrelease=${params.release} --set action="tag"
-                        """
                       else
                         echo "Release changeset files not found"
                         exit 1
                       fi
                     else
-                      sh """
-                      gcloud config set project ${projectId}
-                      gcloud container clusters get-credentials ${clusterName} --zone ${clusterRegion}
+                      gcloud config set project ${PROJECT_ID}
+                      gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                       helm install liquibase-rollback-${params.release} ${CHART_PATH} --namespace ${NAMESPACE} --set release=${params.release} --set rollbackrelease=${params.rollbackRelease} --set action="rollback"
-                      """
                     fi
+                  """
                 }
                 }
           }
