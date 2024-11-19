@@ -12,39 +12,37 @@ pipeline {
         PROJECT_ID = 'meghdo-4567'
         CLUSTER = 'meghdo-cluster'
         REGION = 'europe-west1'
-
-        TIMESTAMP = sh(script: "echo `date +%s`", returnStdout: true).trim()
-
-        JOB_IDENTIFIER = ${TIMESTAMP}
     }
     stages {
         stage('Deploy Liquibase changes') {
             steps {
                 script {
-                    sh '''
-                    set +x  # Exit immediately if a command exits with a non-zero status
+                    // Generate TIMESTAMP and JOB_IDENTIFIER dynamically within the script block
+                    def timestamp = sh(script: "date +%s", returnStdout: true).trim()
+                    def jobIdentifier = "${env.JOB_NAME}-${timestamp}"
 
-                    if [ ${params.action} == "update" ]; then
+                    sh """
+                    if [ "${params.action}" = "update" ]; then
                         # Check if changelog files exist with globbing
                         if compgen -G "helm-charts/changelog/releases/${params.release}/*.xml" > /dev/null; then
                             gcloud config set project ${PROJECT_ID}
                             gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                             # Update deployment
-                            helm install ${JOB_IDENTIFIER} ${CHART_PATH} \
+                            helm install ${jobIdentifier} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
-                                --set action="update"
-                                --set jobidentifier=${JOB_IDENTIFIER}
+                                --set action="update" \
+                                --set jobidentifier=${jobIdentifier}
 
                             # Tag deployment
-                            helm install ${JOB_IDENTIFIER} ${CHART_PATH} \
+                            helm install ${jobIdentifier} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
-                                --set action="tag"
-                                --set jobidentifier=${JOB_IDENTIFIER}
+                                --set action="tag" \
+                                --set jobidentifier=${jobIdentifier}
                         else
                             echo "Release changeset files not found for ${params.release}"
                             exit 1
@@ -54,14 +52,14 @@ pipeline {
                         gcloud config set project ${PROJECT_ID}
                         gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
-                        helm install --set jobidentifier=${JOB_IDENTIFIER} ${CHART_PATH} \
+                        helm install ${jobIdentifier} ${CHART_PATH} \
                             --namespace ${NAMESPACE} \
                             --set release=${params.release} \
                             --set rollbackrelease=${params.rollbackRelease} \
-                            --set action="rollback"
-                            --set jobidentifier=${JOB_IDENTIFIER}
+                            --set action="rollback" \
+                            --set jobidentifier=${jobIdentifier}
                     fi
-                    '''
+                    """
                 }
             }
         }
