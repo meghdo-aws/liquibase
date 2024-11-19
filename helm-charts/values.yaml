@@ -19,6 +19,7 @@ release: "v2.0.0"
 rollbackrelease: "v3.0.0"
 action: "rollback"
 project_id: "meghdo-4567"
+jobidentifier: "dummy"
 
 
 resources:

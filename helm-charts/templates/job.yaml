@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: liquibase-{{ .Values.action }}-{{ .Values.release | replace "." "-" }}
+  name: {{ .Values.jobidentifier }}
   namespace: {{ .Release.Namespace }}
   labels:
     name: liquibase

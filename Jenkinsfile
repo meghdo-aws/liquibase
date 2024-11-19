@@ -12,6 +12,13 @@ pipeline {
         PROJECT_ID = 'meghdo-4567'
         CLUSTER = 'meghdo-cluster'
         REGION = 'europe-west1'
+
+        TIMESTAMP = sh(
+                    script: 'date +%Y%m%d-%H%M%S',
+                    returnStdout: true
+                ).trim()
+
+        JOB_IDENTIFIER = "${env.JOB_NAME}-${TIMESTAMP}"
     }
     stages {
         stage('Deploy Liquibase changes') {
@@ -21,27 +28,29 @@ pipeline {
                     sh '''
                     set -e  # Exit immediately if a command exits with a non-zero status
 
-                    if [ "${ACTION}" == "update" ]; then
+                    if [ "${params.action}" == "update" ]; then
                         # Check if changelog files exist with globbing
-                        if compgen -G "helm-charts/changelog/releases/${RELEASE}/*.xml" > /dev/null; then
+                        if compgen -G "helm-charts/changelog/releases/${params.release}/*.xml" > /dev/null; then
                             gcloud config set project ${PROJECT_ID}
                             gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                             # Update deployment
-                            helm install liquibase-update-${RELEASE} ${CHART_PATH} \
+                            helm install ${JOB_IDENTIFIER} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
-                                --set release=${RELEASE} \
-                                --set rollbackrelease=${RELEASE} \
+                                --set release=${params.release} \
+                                --set rollbackrelease=${params.release} \
                                 --set action="update"
+                                --set jobidentifier=${JOB_IDENTIFIER}
 
                             # Tag deployment
-                            helm install liquibase-tag-${RELEASE} ${CHART_PATH} \
+                            helm install ${JOB_IDENTIFIER} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
-                                --set release=${RELEASE} \
-                                --set rollbackrelease=${RELEASE} \
+                                --set release=${params.release} \
+                                --set rollbackrelease=${params.release} \
                                 --set action="tag"
+                                --set jobidentifier=${JOB_IDENTIFIER}
                         else
-                            echo "Release changeset files not found for ${RELEASE}"
+                            echo "Release changeset files not found for ${params.release}"
                             exit 1
                         fi
                     else
@@ -49,11 +58,12 @@ pipeline {
                         gcloud config set project ${PROJECT_ID}
                         gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
-                        helm install liquibase-rollback-${ROLLBACK_RELEASE} ${CHART_PATH} \
+                        helm install --set jobidentifier=${JOB_IDENTIFIER} ${CHART_PATH} \
                             --namespace ${NAMESPACE} \
-                            --set release=${RELEASE} \
-                            --set rollbackrelease=${ROLLBACK_RELEASE} \
+                            --set release=${params.release} \
+                            --set rollbackrelease=${params.rollbackRelease} \
                             --set action="rollback"
+                            --set jobidentifier=${JOB_IDENTIFIER}
                     fi
                     '''
                 }
