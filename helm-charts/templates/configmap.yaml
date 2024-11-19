@@ -1,0 +1,23 @@
+{{- if eq .Values.action "update" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-{{ .Values.release }}
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- $path := printf "changelog/releases/%s" .Values.release }}
+  {{- range $filename, $content := .Files.Glob (printf "%s/*" $path) }}
+  {{ base $filename }}: |-
+    {{- $.Files.Get $filename | nindent 4 }}
+  {{- end }}
+  master.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+      {{- range $filename, $content := .Files.Glob (printf "%s/*" $path) }}
+      <include file="{{ base $filename }}"/>
+      {{- end }}
+    </databaseChangeLog>
+{{- end }}

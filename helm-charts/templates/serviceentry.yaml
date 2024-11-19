@@ -1,0 +1,18 @@
+{{- if not (lookup "networking.istio.io/v1alpha3" "ServiceEntry" .Release.Namespace "allow-cloud-sql") }}
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: allow-cloud-sql
+  namespace: {{ .Release.Namespace }}
+spec:
+  addresses:
+    - {{ .Values.database.host }}
+  hosts:
+    - ignore.me
+  ports:
+    - number: {{ .Values.database.port }}
+      name: tcp
+      protocol: TCP
+  resolution: DNS
+  location: MESH_EXTERNAL
+{{- end }}

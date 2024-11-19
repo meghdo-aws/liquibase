@@ -1,0 +1,38 @@
+image:
+  liquibase:
+    repository: liquibase/liquibase
+    tag: latest
+    pullPolicy: IfNotPresent
+  cloudSqlProxy:
+    repository: gcr.io/cloud-sql-connectors/cloud-sql-proxy
+    tag: latest
+    pullPolicy: IfNotPresent
+
+database:
+  port: "5432"
+  name: "meghdo-database"
+  username: "db_user"
+  instance: "meghdo-4567:europe-west1:meghdo-instance"
+
+serviceAccount: "liquibase-sa"
+release: "v2.0.0"
+rollbackrelease: "v3.0.0"
+action: "rollback"
+project_id: "meghdo-4567"
+
+
+resources:
+  liquibase:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  cloudSqlProxy:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi

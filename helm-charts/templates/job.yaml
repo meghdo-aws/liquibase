@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: liquibase-{{ .Values.action }}-{{ .Values.release | replace "." "-" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    name: liquibase
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount }}
+      initContainers:
+        - name: cloud-sql-proxy
+          image: "{{ .Values.image.cloudSqlProxy.repository }}:{{ .Values.image.cloudSqlProxy.tag }}"
+          args:
+            - "--structured-logs"
+            - "--address=0.0.0.0"
+            - "--port={{ .Values.database.port }}"
+            - "{{ .Values.database.instance }}"
+          restartPolicy: Always
+          resources:
+            {{- toYaml .Values.resources.cloudSqlProxy | nindent 12 }}
+          securityContext:
+            runAsNonRoot: true
+      containers:
+        - name: liquibase
+          image: "{{ .Values.image.liquibase.repository }}:{{ .Values.image.liquibase.tag }}"
+          command: [ "liquibase" ]
+          args:
+            - "--url=jdbc:postgresql://127.0.0.1:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=disable"
+            - "--changelog-file=master.xml"
+            - "{{ .Values.action }}"
+          env:
+            - name: LIQUIBASE_COMMAND_USERNAME
+              value: {{ .Values.database.username }}
+            - name: LIQUIBASE_COMMAND_TAG
+              value: {{ .Values.release | replace "." "-" }}
+            - name: LIQUIBASE_COMMAND_ROLLBACK_TAG
+              value: {{ .Values.release | replace "." "-" }}
+            - name: LIQUIBASE_SEARCH_PATH
+              value: "./changelog"
+          envFrom:
+            - secretRef:
+                name: db-password
+          resources:
+            {{- toYaml .Values.resources.liquibase | nindent 12 }}
+          volumeMounts:
+            - name: changelog
+              mountPath: /liquibase/changelog
+      volumes:
+        - name: changelog
+          configMap:
+            name: release-{{ .Values.rollbackrelease }}
+      restartPolicy: OnFailure
