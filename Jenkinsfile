@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Fix 1: Use shell script with proper syntax
                     sh '''
-                    set -x  # Exit immediately if a command exits with a non-zero status
+                    set +x  # Exit immediately if a command exits with a non-zero status
 
                     if [ "${params.action}" == "update" ]; then
                         # Check if changelog files exist with globbing
