@@ -1,9 +1,9 @@
   pipeline {
       agent { label 'javaagent' }
       parameters {
-         choice(name: 'action', defaultValue: 'update', choices: ['update', 'rollback'], description:'Select if you update or rollback release' )
+         choice(name: 'action', choices: ['update', 'rollback'], description:'Select if you update or rollback release' )
          string(name: 'release', defaultValue: 'v1.0.0', description: 'Release to be deployed')
-         string(name: 'rollbackRelease', visibility: { return params.action == 'rollback'}, description: 'Release to rollback')
+         string(name: 'rollbackRelease', defaultValue: 'v1.0.0', description: 'Release to rollback')
        }
       environment {
           CHART_PATH = './helm-charts'   // Set the path to your Helm chart
