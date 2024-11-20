@@ -8,6 +8,7 @@ pipeline {
        string(name: 'port', description: 'Port of the database')
        string(name: 'instance', description: 'SQL instance')
        string(name: 'database', description: 'Database Name')
+       booleanParam(name: 'firstrun', defaultValue: false, description: 'Is this the first run?')
     }
     environment {
         CHART_PATH = './helm-charts'
@@ -43,6 +44,19 @@ pipeline {
                                 --set database.name=${params.database} \
                                 --set database.instance=${params.instance}
 
+                            if [ "${params.firstrun}" = "true" ]; then
+                                helm install firstrun-${jobIdentifier} ${CHART_PATH} \
+                                    --namespace ${NAMESPACE} \
+                                    --set release="internal" \
+                                    --set rollbackrelease="internal" \
+                                    --set action="tag" \
+                                    --set jobidentifier="firstrun-${jobIdentifier}" \
+                                    --set database.host=${params.host} \
+                                    --set database.port=${params.port} \
+                                    --set database.name=${params.database} \
+                                    --set database.instance=${params.instance}
+
+                            fi
                             # Tag deployment
                             helm install tag-${jobIdentifier} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
