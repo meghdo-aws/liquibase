@@ -19,7 +19,7 @@ pipeline {
                 script {
                     // Generate TIMESTAMP and JOB_IDENTIFIER dynamically within the script block
                     def timestamp = sh(script: "date +%s", returnStdout: true).trim()
-                    def jobIdentifier = "${env.JOB_NAME}-${timestamp}"
+                    def jobIdentifier = "${env.JOB_NAME}-${timestamp}".replaceAll(/[^a-zA-Z0-9.-]/, "-").toLowerCase()
 
                     sh """
                     if [ "${params.action}" = "update" ]; then
