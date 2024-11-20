@@ -4,6 +4,10 @@ pipeline {
        choice(name: 'action', choices: ['update', 'rollback'], description:'Select if you update or rollback release' )
        string(name: 'release', defaultValue: 'v1.0.0', description: 'Release to be deployed')
        string(name: 'rollbackRelease', defaultValue: 'v1.0.0', description: 'Release to rollback')
+       string(name: 'host', description: 'Host IP of the database')
+       string(name: 'port', description: 'Port of the database')
+       string(name: 'instance', description: 'SQL instance')
+       string(name: 'database', description: 'Database Name')
     }
     environment {
         CHART_PATH = './helm-charts'
@@ -33,7 +37,11 @@ pipeline {
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
                                 --set action="update" \
-                                --set jobidentifier=${jobIdentifier}
+                                --set jobidentifier=${jobIdentifier} \
+                                --set database.host=${params.host} \
+                                --set database.port=${params.port} \
+                                --set database.name=${params.database} \
+                                --set database.instance=${params.instance}
 
                             # Tag deployment
                             helm install ${jobIdentifier} ${CHART_PATH} \
@@ -41,7 +49,11 @@ pipeline {
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
                                 --set action="tag" \
-                                --set jobidentifier=${jobIdentifier}
+                                --set jobidentifier=${jobIdentifier} \
+                                --set database.host=${params.host} \
+                                --set database.port=${params.port} \
+                                --set database.name=${params.database} \
+                                --set database.instance=${params.instance}
                         else
                             echo "Release changeset files not found for ${params.release}"
                             exit 1
@@ -57,6 +69,10 @@ pipeline {
                             --set rollbackrelease=${params.rollbackRelease} \
                             --set action="rollback" \
                             --set jobidentifier=${jobIdentifier}
+                            --set database.host=${params.host} \
+                            --set database.port=${params.port} \
+                            --set database.name=${params.database} \
+                            --set database.instance=${params.instance}
                     fi
                     """
                 }

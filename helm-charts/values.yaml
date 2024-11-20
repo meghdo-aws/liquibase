@@ -9,17 +9,18 @@ image:
     pullPolicy: IfNotPresent
 
 database:
+  host: "35.233.22.188"
   port: "5432"
   name: "meghdo-database"
   username: "db_user"
-  instance: "meghdo-4567:europe-west1:meghdo-instance"
+  instance: "meghdo-instance"
 
 serviceAccount: "liquibase-sa"
 release: "v2.0.0"
 rollbackrelease: "v3.0.0"
 action: "rollback"
 project_id: "meghdo-4567"
-jobidentifier: "dummy"
+region: "europe-west1"
 
 
 resources:
