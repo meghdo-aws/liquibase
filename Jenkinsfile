@@ -32,24 +32,24 @@ pipeline {
                             gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                             # Update deployment
-                            helm install ${jobIdentifier} ${CHART_PATH} \
+                            helm install update-${jobIdentifier} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
                                 --set action="update" \
-                                --set jobidentifier=${jobIdentifier} \
+                                --set jobidentifier="update-${jobIdentifier}" \
                                 --set database.host=${params.host} \
                                 --set database.port=${params.port} \
                                 --set database.name=${params.database} \
                                 --set database.instance=${params.instance}
 
                             # Tag deployment
-                            helm install ${jobIdentifier} ${CHART_PATH} \
+                            helm install tag-${jobIdentifier} ${CHART_PATH} \
                                 --namespace ${NAMESPACE} \
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
                                 --set action="tag" \
-                                --set jobidentifier=${jobIdentifier} \
+                                --set jobidentifier="tag-${jobIdentifier}" \
                                 --set database.host=${params.host} \
                                 --set database.port=${params.port} \
                                 --set database.name=${params.database} \
@@ -63,12 +63,12 @@ pipeline {
                         gcloud config set project ${PROJECT_ID}
                         gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
-                        helm install ${jobIdentifier} ${CHART_PATH} \
+                        helm install rollback-${jobIdentifier} ${CHART_PATH} \
                             --namespace ${NAMESPACE} \
                             --set release=${params.release} \
                             --set rollbackrelease=${params.rollbackRelease} \
                             --set action="rollback" \
-                            --set jobidentifier=${jobIdentifier}
+                            --set jobidentifier="rollback-${jobIdentifier}"
                             --set database.host=${params.host} \
                             --set database.port=${params.port} \
                             --set database.name=${params.database} \
