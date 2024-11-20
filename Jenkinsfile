@@ -68,7 +68,7 @@ pipeline {
                             --set release=${params.release} \
                             --set rollbackrelease=${params.rollbackRelease} \
                             --set action="rollback" \
-                            --set jobidentifier="rollback-${jobIdentifier}"
+                            --set jobidentifier="rollback-${jobIdentifier}" \
                             --set database.host=${params.host} \
                             --set database.port=${params.port} \
                             --set database.name=${params.database} \

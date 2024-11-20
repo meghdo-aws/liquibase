@@ -36,10 +36,10 @@ spec:
               value: {{ .Values.database.username }}
             - name: LIQUIBASE_COMMAND_TAG
               value: {{ .Values.release | replace "." "-" }}
-            - name: LIQUIBASE_COMMAND_ROLLBACK_TAG
-              value: {{ .Values.release | replace "." "-" }}
             - name: LIQUIBASE_SEARCH_PATH
               value: "./changelog"
+            - name: LIQUIBASE_LOG_LEVEL
+              value: {{ .Values.loglevel }}
           envFrom:
             - secretRef:
                 name: db-password

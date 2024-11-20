@@ -21,6 +21,7 @@ rollbackrelease: "v3.0.0"
 action: "rollback"
 project_id: "meghdo-4567"
 region: "europe-west1"
+loglevel: "FINE"
 
 
 resources:
