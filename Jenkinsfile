@@ -23,8 +23,7 @@ pipeline {
 
                     sh """
                     if [ "${params.action}" = "update" ]; then
-                        # Check if changelog files exist with globbing
-                        if compgen -G "helm-charts/changelog/releases/${params.release}/*.xml" > /dev/null; then
+                        if find "helm-charts/changelog/releases/${params.release}" -maxdepth 1 -name "*.xml" | grep -q .; then
                             gcloud config set project ${PROJECT_ID}
                             gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
