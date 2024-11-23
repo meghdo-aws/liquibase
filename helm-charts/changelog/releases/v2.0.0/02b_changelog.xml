@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="02b" author="meghdo">
+    <changeSet id="02b" author="db_user">
         <createTable tableName="search">
             <column name="id" type="INT">
                 <constraints primaryKey="true"/>
