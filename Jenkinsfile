@@ -1,5 +1,10 @@
 pipeline {
-    agent { label 'javaagent' }
+    agent {
+            kubernetes {
+                label 'meghdo-java'
+                yamlFile "pipeline/pod.yaml"
+            }
+    }
     parameters {
        choice(name: 'action', choices: ['update', 'rollback'], description:'Select if you update or rollback release' )
        string(name: 'release', defaultValue: 'v1.0.0', description: 'Release to be deployed')
@@ -22,6 +27,7 @@ pipeline {
         stage('Deploy Liquibase changes') {
             steps {
                 script {
+                    container('infra-tools') {
                     // Generate TIMESTAMP and JOB_IDENTIFIER dynamically within the script block
                     def timestamp = sh(script: "date +%s", returnStdout: true).trim()
                     def jobIdentifier = "${env.JOB_NAME}-${timestamp}".replaceAll(/[^a-zA-Z0-9.-]/, "-").toLowerCase()
@@ -79,6 +85,7 @@ pipeline {
                             --set database.instance=${params.instance}
                     fi
                     """
+                       }
                     }     
                 }
             }
