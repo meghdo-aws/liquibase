@@ -25,7 +25,7 @@ pipeline {
                     // Generate TIMESTAMP and JOB_IDENTIFIER dynamically within the script block
                     def timestamp = sh(script: "date +%s", returnStdout: true).trim()
                     def jobIdentifier = "${env.JOB_NAME}-${timestamp}".replaceAll(/[^a-zA-Z0-9.-]/, "-").toLowerCase()
-
+                    if (params.database?.trim()) {
                     sh """
                     if [ "${params.action}" = "update" ]; then
                         if find "helm-charts/changelog/releases/${params.release}" -maxdepth 1 -name "*.xml" | grep -q .; then
@@ -79,6 +79,7 @@ pipeline {
                             --set database.instance=${params.instance}
                     fi
                     """
+                    }     
                 }
             }
         }
