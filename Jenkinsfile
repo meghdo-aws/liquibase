@@ -37,6 +37,7 @@ pipeline {
 
                             # Update deployment
                             helm install update-${jobIdentifier} ${CHART_PATH} \
+                                --create-namespace \
                                 --namespace ${NAMESPACE} \
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
@@ -48,6 +49,7 @@ pipeline {
                             fi
                             # Tag deployment
                             helm install tag-${jobIdentifier} ${CHART_PATH} \
+                                --create-namespace \
                                 --namespace ${NAMESPACE} \
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
@@ -63,6 +65,7 @@ pipeline {
                         gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                         helm install rollback-${jobIdentifier} ${CHART_PATH} \
+                            --create-namespace \
                             --namespace ${NAMESPACE} \
                             --set release=${params.release} \
                             --set rollbackrelease=${params.rollbackRelease} \
