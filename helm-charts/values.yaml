@@ -16,6 +16,7 @@ database:
   instance: "meghdo-instance"
 
 serviceAccount:
+  name: liquibase
   automount: true
   annotations: 
     iam.gke.io/gcp-service-account: svc-gke@meghdo-4567.iam.gserviceaccount.com
