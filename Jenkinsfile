@@ -9,16 +9,13 @@ pipeline {
        choice(name: 'action', choices: ['update', 'rollback'], description:'Select if you update or rollback release' )
        string(name: 'release', defaultValue: 'v1.0.0', description: 'Release to be deployed')
        string(name: 'rollbackRelease', defaultValue: 'v1.0.0', description: 'Release to rollback')
-       string(name: 'host', description: 'Host IP of the database')
-       string(name: 'port', description: 'Port of the database')
-       string(name: 'instance', description: 'SQL instance')
-       string(name: 'database', description: 'Database Name')
        booleanParam(name: 'firstrun', defaultValue: false, description: 'Is this the first run?')
     }
     environment {
         CHART_PATH = './helm-charts'
         BASE_PATH = '/home/jenkins/agent/workspace'
         NAMESPACE = 'liquibase'
+        SERVICEACCOUNT = 'liquibase'
         PROJECT_ID = 'meghdo-4567'
         CLUSTER = 'meghdo-cluster'
         REGION = 'europe-west1'
@@ -36,6 +33,7 @@ pipeline {
                     if [ "${params.action}" = "update" ]; then
                         if find "helm-charts/changelog/releases/${params.release}" -maxdepth 1 -name "*.xml" | grep -q .; then
                             gcloud config set project ${PROJECT_ID}
+                            gcloud iam service-accounts add-iam-policy-binding svc-gke@${PROJECT_ID}.iam.gserviceaccount.com --member="serviceAccount:${PROJECT_ID}.svc.id.goog[${NAMESPACE}/${SERVICEACCOUNT}]" --role="roles/iam.workloadIdentityUser" 
                             gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                             # Update deployment
@@ -45,10 +43,6 @@ pipeline {
                                 --set rollbackrelease=${params.release} \
                                 --set action="update" \
                                 --set jobidentifier="update-${jobIdentifier}" \
-                                --set database.host=${params.host} \
-                                --set database.port=${params.port} \
-                                --set database.name=${params.database} \
-                                --set database.instance=${params.instance}
 
                             if [ "${params.firstrun}" = "true" ]; then
                              sleep 180
@@ -60,10 +54,6 @@ pipeline {
                                 --set rollbackrelease=${params.release} \
                                 --set action="tag" \
                                 --set jobidentifier="tag-${jobIdentifier}" \
-                                --set database.host=${params.host} \
-                                --set database.port=${params.port} \
-                                --set database.name=${params.database} \
-                                --set database.instance=${params.instance}
                         else
                             echo "Release changeset files not found for ${params.release}"
                             exit 1
@@ -79,10 +69,6 @@ pipeline {
                             --set rollbackrelease=${params.rollbackRelease} \
                             --set action="rollback" \
                             --set jobidentifier="rollback-${jobIdentifier}" \
-                            --set database.host=${params.host} \
-                            --set database.port=${params.port} \
-                            --set database.name=${params.database} \
-                            --set database.instance=${params.instance}
                     fi
                     """
                        }
