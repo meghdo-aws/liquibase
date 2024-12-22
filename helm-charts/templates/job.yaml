@@ -9,7 +9,7 @@ spec:
   backoffLimit: 5
   template:
     spec:
-      serviceAccountName: {{ $.Release.Name }}
+      serviceAccountName: {{ .Values.serviceaccount.name }}
       initContainers:
         - name: cloud-sql-proxy
           image: "{{ .Values.image.cloudSqlProxy.repository }}:{{ .Values.image.cloudSqlProxy.tag }}"
