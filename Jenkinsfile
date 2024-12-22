@@ -42,7 +42,7 @@ pipeline {
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
                                 --set action="update" \
-                                --set jobidentifier="update-${jobIdentifier}" \
+                                --set jobidentifier="update-${jobIdentifier}" 
 
                             if [ "${params.firstrun}" = "true" ]; then
                              sleep 180
@@ -54,7 +54,7 @@ pipeline {
                                 --set release=${params.release} \
                                 --set rollbackrelease=${params.release} \
                                 --set action="tag" \
-                                --set jobidentifier="tag-${jobIdentifier}" \
+                                --set jobidentifier="tag-${jobIdentifier}" 
                         else
                             echo "Release changeset files not found for ${params.release}"
                             exit 1
@@ -70,7 +70,7 @@ pipeline {
                             --set release=${params.release} \
                             --set rollbackrelease=${params.rollbackRelease} \
                             --set action="rollback" \
-                            --set jobidentifier="rollback-${jobIdentifier}" \
+                            --set jobidentifier="rollback-${jobIdentifier}" 
                     fi
                     """
 
