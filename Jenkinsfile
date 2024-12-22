@@ -14,7 +14,7 @@ pipeline {
     environment {
         CHART_PATH = './helm-charts'
         BASE_PATH = '/home/jenkins/agent/workspace'
-        NAMESPACE = 'liquibase'
+        NAMESPACE = 'default'
         SERVICEACCOUNT = 'liquibase'
         PROJECT_ID = 'meghdo-4567'
         CLUSTER = 'meghdo-cluster'
