@@ -15,7 +15,10 @@ database:
   username: "db_user"
   instance: "meghdo-instance"
 
-serviceAccount: "liquibase-sa"
+serviceAccount:
+  automount: true
+  annotations: 
+    iam.gke.io/gcp-service-account: svc-gke@meghdo-4567.iam.gserviceaccount.com
 release: "v2.0.0"
 rollbackrelease: "v3.0.0"
 action: "rollback"
