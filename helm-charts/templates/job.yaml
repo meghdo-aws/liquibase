@@ -5,11 +5,12 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     name: liquibase
-  annotations:
-    sidecar.istio.io/inject: "false"
 spec:
   backoffLimit: 5
   template:
+    metadata:
+        annotations:
+          sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
       initContainers:
