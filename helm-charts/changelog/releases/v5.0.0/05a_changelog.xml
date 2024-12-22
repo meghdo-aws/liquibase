@@ -1,0 +1,19 @@
+<!-- 05a_changelog.xml -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="009" author="db_user">
+        <createTable tableName="parai">
+            <column name="vid" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(100)"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="parai"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
