@@ -40,9 +40,11 @@ spec:
               value: "./changelog"
             - name: LIQUIBASE_LOG_LEVEL
               value: {{ .Values.loglevel }}
-          envFrom:
-            - secretRef:
-                name: db-password
+            - name: LIQUIBASE_COMMAND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-password
+                  key: db_password                
           resources:
             {{- toYaml .Values.resources.liquibase | nindent 12 }}
           volumeMounts:
