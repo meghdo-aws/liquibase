@@ -32,7 +32,7 @@ pipeline {
                     if [ "${params.action}" = "update" ]; then
                         if find "helm-charts/changelog/releases/${params.release}" -maxdepth 1 -name "*.xml" | grep -q .; then
                             gcloud config set project ${PROJECT_ID}
-                            gcloud iam service-accounts add-iam-policy-binding svc-gke@${PROJECT_ID}.iam.gserviceaccount.com --member="serviceAccount:${PROJECT_ID}.svc.id.goog[${NAMESPACE}/${SERVICEACCOUNT}]" --role="roles/iam.workloadIdentityUser" 
+                            gcloud iam service-accounts add-iam-policy-binding svc-cloudsql@${PROJECT_ID}.iam.gserviceaccount.com --member="serviceAccount:${PROJECT_ID}.svc.id.goog[${NAMESPACE}/${SERVICEACCOUNT}]" --role="roles/iam.workloadIdentityUser" 
                             gcloud container clusters get-credentials ${CLUSTER} --zone ${REGION}
 
                             # Update deployment
