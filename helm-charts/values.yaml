@@ -19,7 +19,7 @@ serviceAccount:
   name: liquibase
   automount: true
   annotations: 
-    iam.gke.io/gcp-service-account: svc-gke@meghdo-4567.iam.gserviceaccount.com
+    iam.gke.io/gcp-service-account: svc-cloudsql@meghdo-4567.iam.gserviceaccount.com
 release: "v2.0.0"
 rollbackrelease: "v3.0.0"
 action: "rollback"
