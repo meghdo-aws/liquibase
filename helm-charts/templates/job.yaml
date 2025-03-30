@@ -13,25 +13,12 @@ spec:
           sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
-      initContainers:
-        - name: cloud-sql-proxy
-          image: "{{ .Values.image.cloudSqlProxy.repository }}:{{ .Values.image.cloudSqlProxy.tag }}"
-          args:
-            - "--structured-logs"
-            - "--address=0.0.0.0"
-            - "--port={{ .Values.database.port }}"
-            - "{{ .Values.project_id }}:{{ .Values.region }}:{{ .Values.database.instance }}"
-          restartPolicy: Always
-          resources:
-            {{- toYaml .Values.resources.cloudSqlProxy | nindent 12 }}
-          securityContext:
-            runAsNonRoot: true
       containers:
         - name: liquibase
           image: "{{ .Values.image.liquibase.repository }}:{{ .Values.image.liquibase.tag }}"
           command: [ "liquibase" ]
           args:
-            - "--url=jdbc:postgresql://127.0.0.1:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=disable"
+            - "--url=jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=disable"
             - "--changelog-file=master.xml"
             - "{{ .Values.action }}"
           env:

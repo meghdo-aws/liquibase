@@ -52,3 +52,11 @@ spec:
         limits:
           memory: "512Mi"
           cpu: "512m"
+    - name: aws
+      image: amazon/aws-cli
+      imagePullPolicy: Always
+      command: [ "sleep" ]
+      args: [ "9999999" ]
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0

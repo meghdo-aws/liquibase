@@ -9,22 +9,21 @@ image:
     pullPolicy: IfNotPresent
 
 database:
-  host: "35.233.22.188"
+  host: "meghdo-instance.ca9m0486s1c6.us-east-1.rds.amazonaws.com"
   port: "5432"
-  name: "meghdo-database"
-  username: "db_user"
+  name: "meghdo_database"
+  username: "dbuser"
   instance: "meghdo-instance"
 
 serviceAccount:
   name: liquibase
   automount: true
-  annotations: 
-    iam.gke.io/gcp-service-account: svc-cloudsql@meghdo-4567.iam.gserviceaccount.com
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::354918396806:role/rds-access-role
 release: "v2.0.0"
 rollbackrelease: "v3.0.0"
 action: "rollback"
-project_id: "meghdo-4567"
-region: "europe-west1"
+region: "us-east-1"
 loglevel: "FINE"
 
 
@@ -36,10 +35,4 @@ resources:
     requests:
       cpu: 250m
       memory: 256Mi
-  cloudSqlProxy:
-    limits:
-      cpu: 200m
-      memory: 256Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+
