@@ -1,8 +1,8 @@
-{{- if not (lookup "networking.istio.io/v1alpha3" "ServiceEntry" .Release.Namespace (printf "allow-cloud-sql-%s" (.Values.database.host | replace "." "-"))) }}
+{{- if not (lookup "networking.istio.io/v1alpha3" "ServiceEntry" .Release.Namespace (printf "allow-cloud-sql")) }}
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
-  name: allow-cloud-sql-{{ .Values.database.host | replace "." "-" }}
+  name: allow-cloud-sql
   namespace: {{ .Release.Namespace }}
 spec:
   addresses:
