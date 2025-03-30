@@ -5,10 +5,8 @@ metadata:
   name: allow-cloud-sql
   namespace: {{ .Release.Namespace }}
 spec:
-  addresses:
-    - {{ .Values.database.host }}
   hosts:
-    - ignore.me
+    - {{ .Values.database.host }}
   ports:
     - number: {{ .Values.database.port }}
       name: tcp
