@@ -40,8 +40,17 @@ spec:
           volumeMounts:
             - name: changelog
               mountPath: /liquibase/changelog
+            - name: db-password
+              mountPath: /root/db-password
+              subPath: db-password
       volumes:
         - name: changelog
           configMap:
             name: release-{{ .Values.rollbackrelease }}
+        - name: db-password
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: db-password
       restartPolicy: OnFailure
