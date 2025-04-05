@@ -34,23 +34,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: db-password
-                  key: db-password                        
+                  key: db_password
           resources:
             {{- toYaml .Values.resources.liquibase | nindent 12 }}
           volumeMounts:
             - name: changelog
               mountPath: /liquibase/changelog
-            - name: db-password-volume
-              mountPath: /root/db-password-file
-              readOnly: true
       volumes:
         - name: changelog
           configMap:
             name: release-{{ .Values.rollbackrelease }}
-        - name: db-password-volume
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: db-password
       restartPolicy: OnFailure
