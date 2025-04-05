@@ -18,7 +18,7 @@ spec:
           image: "{{ .Values.image.liquibase.repository }}:{{ .Values.image.liquibase.tag }}"
           command: [ "liquibase" ]
           args:
-            - "--url=jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=disable"
+            - "--url=jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}"
             - "--changelog-file=master.xml"
             - "{{ .Values.action }}"
           env:
