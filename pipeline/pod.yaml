@@ -39,7 +39,7 @@ spec:
           memory: "512Mi"
           cpu: "512m"
     - name: infra-tools
-      image: meghdo/infra-tools:v1.0
+      image: alpine/helm:3.11.1
       command: ["sleep"]
       args: ["9999999"]
       volumeMounts:
