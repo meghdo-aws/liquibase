@@ -1,7 +1,7 @@
 image:
   liquibase:
     repository: liquibase/liquibase
-    tag: latest
+    tag: 4.23
     pullPolicy: IfNotPresent
 
 database:
